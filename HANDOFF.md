@@ -36,8 +36,14 @@ git add .projects/state.local.json && git commit    # teammates `stripe projects
    `/api/auth/callback`) for localhost + Vercel; logout `http://localhost:3000`.
 2. Organization-scoped login: org picker or `/auth/login?organization=org_x`. A session
    without an `org_id` claim is treated as signed out (see `contract.js`).
-3. Roles: an Auth0 Action writing the `https://res0.app/roles` claim; until then everyone
-   is `owner`.
+3. Roles: an Auth0 Action writing two claims on the token —
+   - `https://res0.app/roles`: array containing one of `owner` · `general_manager` ·
+     `beverage_director` · `server` (see `lib/roles.js`; unknown → `owner`)
+   - `https://res0.app/venue`: venue slug (e.g. `above-eleven`) for venue-scoped roles
+     (GM, server); omit for owner/beverage director
+   Role decides nav + page access + venue scoping, enforced server-side. The demo
+   "View as" switcher only exists in stub mode — real sessions make it disappear,
+   and the four seeded members map 1:1 onto the four roles for test logins.
 4. Members page still lists seeded rows — swap to the Org's member list if time allows.
 
 ## B — Billing (what's left)

@@ -2,28 +2,34 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getSession, getEntitlement, canAddVenue } from '@/lib/contract.js';
 import { listVenues, seed } from '@/lib/db.js';
+import { canView, homeFor, scopeVenues } from '@/lib/roles.js';
 import AddVenue from '@/components/AddVenue.jsx';
 import PublishButton from '@/components/PublishButton.jsx';
 
 export default async function VenuesPage() {
   const session = await getSession();
   if (!session) redirect('/auth/login'); // only reachable once Auth0 is live
+  if (!canView(session.role, '/')) redirect(homeFor(session.role));
   await seed(session.orgId);
 
-  const [entitlement, venues] = await Promise.all([
+  const [entitlement, allVenues] = await Promise.all([
     getEntitlement(session.orgId),
     listVenues(session.orgId),
   ]);
+  // A GM sees their venue; the owner sees the portfolio. Scope is a token fact.
+  const venues = scopeVenues(session, allVenues);
 
   // The join: an identity fact and a billing fact, decided together.
-  const verdict = canAddVenue(entitlement, venues.length);
+  // The count is the ORG's venue count — scope narrows what you see,
+  // never what the plan covers.
+  const verdict = canAddVenue(entitlement, allVenues.length);
 
   return (
     <>
       <div className="head">
         <div>
-          <div className="eyebrow">{session.orgName}</div>
-          <h1>Venues</h1>
+          <div className="eyebrow">{session.orgName}{session.venueSlug ? ' · your venue' : ''}</div>
+          <h1>Venue hub</h1>
           <p className="lede">
             Every venue you operate is one unit on the subscription. Open one and the bill
             follows; close one and it follows back.
@@ -32,8 +38,8 @@ export default async function VenuesPage() {
         <div className="card" style={{ minWidth: 210, gap: 6 }}>
           <div className="meta">Plan covers</div>
           <div className="row" style={{ alignItems: 'baseline', gap: 8 }}>
-            <span style={{ fontFamily: 'var(--serif)', fontSize: 34, lineHeight: 1 }}>
-              {venues.length}
+            <span style={{ fontSize: 34, fontWeight: 800, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
+              {allVenues.length}
             </span>
             <span className="meta">of {entitlement.quantity} venues</span>
           </div>
@@ -64,7 +70,7 @@ export default async function VenuesPage() {
           </div>
         ))}
 
-        <AddVenue allowed={verdict.ok} message={verdict.message} count={venues.length} limit={entitlement.quantity} />
+        <AddVenue allowed={verdict.ok} message={verdict.message} count={allVenues.length} limit={entitlement.quantity} />
       </div>
     </>
   );

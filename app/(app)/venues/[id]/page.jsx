@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getSession, getEntitlement, canPublish } from '@/lib/contract.js';
 import { getVenue, seed } from '@/lib/db.js';
+import { canView, homeFor } from '@/lib/roles.js';
 import MenuBuilder from '@/components/MenuBuilder.jsx';
 import PublishButton from '@/components/PublishButton.jsx';
 
@@ -9,10 +10,14 @@ export default async function VenuePage({ params }) {
   const { id } = await params;
   const session = await getSession();
   if (!session) redirect('/auth/login');
+  if (!canView(session.role, '/')) redirect(homeFor(session.role));
   await seed(session.orgId);
 
   const venue = await getVenue(session.orgId, id);
   if (!venue) notFound();
+  // Venue-scoped roles can only open their own venue — not-found, never a 403,
+  // so the URL doesn't confirm what exists outside their scope.
+  if (session.venueSlug && venue.slug !== session.venueSlug) notFound();
 
   const entitlement = await getEntitlement(session.orgId);
   const publishable = canPublish(entitlement);

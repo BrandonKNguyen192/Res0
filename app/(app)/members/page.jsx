@@ -1,10 +1,12 @@
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/contract.js';
 import { listMembers, listVenues, seed } from '@/lib/db.js';
+import { canView, homeFor } from '@/lib/roles.js';
 
 export default async function MembersPage() {
   const session = await getSession();
   if (!session) redirect('/auth/login');
+  if (!canView(session.role, '/members')) redirect(homeFor(session.role));
   await seed(session.orgId);
 
   const [members, venues] = await Promise.all([

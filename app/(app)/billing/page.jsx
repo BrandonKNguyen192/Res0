@@ -14,6 +14,9 @@ import { stripeReady } from '@/lib/stripe.js';
 export default async function BillingPage({ searchParams }) {
   const session = await getSession();
   if (!session) redirect('/auth/login');
+  // Billing is the owner's — the subscription belongs to the org, and only the
+  // owner role touches it. Role comes from the token, enforced here.
+  if (session.role !== 'owner') redirect('/');
   await seed(session.orgId);
 
   const flags = await searchParams;

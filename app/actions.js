@@ -1,8 +1,26 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { getSession, getEntitlement, canAddVenue, canPublish } from '@/lib/contract.js';
 import { listVenues, createVenue, updateVenue, seed } from '@/lib/db.js';
+import { ROLES, homeFor } from '@/lib/roles.js';
+
+/** Demo-only "View as": swaps the stub persona via cookie, server-side — the
+ *  same round-trip a real login would make. Live Auth0 sessions ignore it. */
+export async function setDemoRole(formData) {
+  const role = String(formData.get('role') || '');
+  if (!ROLES.includes(role)) return;
+  const jar = await cookies();
+  jar.set('res0_demo_role', role, { path: '/', sameSite: 'lax' });
+  redirect(homeFor(role));
+}
+
+/** Managing venues is for operators — owner or GM. Role comes from the token. */
+function canOperate(session) {
+  return session.role === 'owner' || session.role === 'general_manager';
+}
 
 /**
  * Add a venue — and the one place the premise is enforced.
@@ -14,6 +32,7 @@ import { listVenues, createVenue, updateVenue, seed } from '@/lib/db.js';
 export async function addVenue(formData) {
   const session = await getSession();
   if (!session) return { ok: false, message: 'Not signed in.' };
+  if (!canOperate(session)) return { ok: false, message: 'Your role can’t add venues.' };
 
   await seed(session.orgId);
   const entitlement = await getEntitlement(session.orgId);
@@ -34,6 +53,7 @@ export async function addVenue(formData) {
 export async function publishVenue(venueId) {
   const session = await getSession();
   if (!session) return { ok: false, message: 'Not signed in.' };
+  if (!canOperate(session)) return { ok: false, message: 'Your role can’t publish menus.' };
 
   const entitlement = await getEntitlement(session.orgId);
   if (!canPublish(entitlement)) {
