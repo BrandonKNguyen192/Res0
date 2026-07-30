@@ -2,82 +2,72 @@
   "version": 1,
   "project": {
     "catalog": "prod",
-    "initializedAt": "2026-07-30T21:15:37.507Z",
-    "merchantDisplayName": "acct_1RlWILGoNno6ydZ3",
-    "merchantId": "acct_1RlWILGoNno6ydZ3",
-    "projectId": "project_61V8PG5gCqrl9518U16SuuFhAjSQayjeSaio3qJpoIGW",
-    "projectName": "res0"
+    "initializedAt": "2026-07-30T22:56:59.712Z",
+    "merchantDisplayName": "Komodos",
+    "merchantId": "acct_1Tz0T4CTPelHdZqA",
+    "projectId": "project_61V8QqB8bkrue0Tsr16V8OQRLoSQlbOWJCWeZE2cSEGO",
+    "projectName": "Res0"
   },
   "providers": {
     "auth0": {
-      "accountRequestId": "fprvcnn_61V8OzK4DrH3eUenL16SuuFhAjSQayjeSaio3qJpoAmO",
-      "configuration": {},
-      "linkedAt": "2026-07-30T20:58:18.060Z",
+      "accountRequestId": "facctrq_61V8Qs4gScpncUclL16V8OQRLoSQlbOWJCWeZE2cSAJ6",
+      "configuration": {
+        "locality": "us",
+        "naming_prefix": "res0-dev"
+      },
+      "linkedAt": "2026-07-30T22:59:02.158Z",
       "providerId": "prvdr_61UVctyxfLOj4FpVw5Bmi",
       "providerName": "Auth0",
       "redirectUrl": null,
-      "requestedAt": "2026-07-30T20:58:18.060Z",
+      "requestedAt": "2026-07-30T22:59:02.158Z",
       "status": "complete"
     },
     "vercel": {
-      "accountRequestId": "facctrq_61V8PNF2ndyxEklDE16SuuFhAjSQayjeSaio3qJpo2sK",
+      "accountRequestId": "facctrq_61V8QsdaxvL5GFQV816V8OQRLoSQlbOWJCWeZE2cSCD2",
       "configuration": {},
-      "linkedAt": "2026-07-30T21:23:04.359Z",
+      "linkedAt": "2026-07-30T22:59:35.484Z",
       "providerId": "prvdr_61ULUAr4zlQgZkvXY5LsG",
       "providerName": "Vercel",
       "redirectUrl": null,
-      "requestedAt": "2026-07-30T21:23:04.359Z",
+      "requestedAt": "2026-07-30T22:59:35.484Z",
       "status": "complete"
     }
   },
   "resources": {
+    "auth0-client": {
+      "configuration": {
+        "name": "Res0"
+      },
+      "createdAt": "2026-07-30T23:09:07.970Z",
+      "lastRevealedAt": null,
+      "lastStatus": "complete",
+      "name": "auth0-client",
+      "providerId": "prvdr_61UVctyxfLOj4FpVw5Bmi",
+      "providerName": "Auth0",
+      "resourceId": "fres_61V8R1s174Wljg4uF16V8OQRLoSQlbOWJCWeZE2cSEWe",
+      "serviceId": "client"
+    },
     "auth0-plan": {
       "configuration": {},
-      "createdAt": "2026-07-30T21:16:48.760Z",
-      "lastRevealedAt": "2026-07-30T21:16:48.909Z",
+      "createdAt": "2026-07-30T23:01:04.062Z",
+      "lastRevealedAt": "2026-07-30T23:01:04.309Z",
       "lastStatus": "complete",
       "name": "auth0-plan",
       "providerId": "prvdr_61UVctyxfLOj4FpVw5Bmi",
       "providerName": "Auth0",
-      "resourceId": "fres_61V8PHC0DHMnf3riR16SuuFhAjSQayjeSaio3qJpoGHA",
+      "resourceId": "fres_61V8Qu5lZYfp43bXy16V8OQRLoSQlbOWJCWeZE2cSXJo",
       "serviceId": "free"
-    },
-    "res0": {
-      "configuration": {
-        "name": "res0"
-      },
-      "createdAt": "2026-07-30T21:54:28.595Z",
-      "lastRevealedAt": "2026-07-30T21:54:28.767Z",
-      "lastStatus": "complete",
-      "name": "res0",
-      "providerId": "prvdr_61UVctyxfLOj4FpVw5Bmi",
-      "providerName": "Auth0",
-      "resourceId": "fres_61V8Prdfg9tNrtqKu16SuuFhAjSQayjeSaio3qJpoOUC",
-      "serviceId": "client"
     },
     "vercel-plan": {
       "configuration": {},
-      "createdAt": "2026-07-30T21:23:36.114Z",
-      "lastRevealedAt": "2026-07-30T21:23:36.403Z",
+      "createdAt": "2026-07-30T23:01:25.799Z",
+      "lastRevealedAt": "2026-07-30T23:01:42.199Z",
       "lastStatus": "complete",
       "name": "vercel-plan",
       "providerId": "prvdr_61ULUAr4zlQgZkvXY5LsG",
       "providerName": "Vercel",
-      "resourceId": "fres_61V8PNnPiCLeSEwlV16SuuFhAjSQayjeSaio3qJpoNVo",
+      "resourceId": "fres_61V8QuSfewrysBKXz16V8OQRLoSQlbOWJCWeZE2cS7xw",
       "serviceId": "hobby"
-    },
-    "vercel-project": {
-      "configuration": {
-        "name": "res0"
-      },
-      "createdAt": "2026-07-30T21:23:37.622Z",
-      "lastRevealedAt": "2026-07-30T21:23:37.764Z",
-      "lastStatus": "complete",
-      "name": "vercel-project",
-      "providerId": "prvdr_61ULUAr4zlQgZkvXY5LsG",
-      "providerName": "Vercel",
-      "resourceId": "fres_61V8PNo8Z2oX98ECz16SuuFhAjSQayjeSaio3qJpoA2a",
-      "serviceId": "project"
     }
   }
 }

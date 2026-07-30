@@ -1,7 +1,7 @@
 <!-- stripe-projects-cli managed:agents-md:start -->
 ## Stripe Projects CLI
 
-This repository is initialized for the Stripe project "res0".
+This repository is initialized for the Stripe project "Res0".
 
 ## Tools used
 
