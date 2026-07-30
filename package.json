@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "db:migrate": "node --env-file-if-exists=.env scripts/migrate.mjs"
   },
   "dependencies": {
     "next": "^15.1.0",
+    "pg": "^8.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "stripe": "^17.5.0",

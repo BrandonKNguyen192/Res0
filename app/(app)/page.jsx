@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { getSession, getEntitlement, canAddVenue } from '@/lib/contract.js';
 import { listVenues, seed } from '@/lib/db.js';
 import AddVenue from '@/components/AddVenue.jsx';
@@ -6,11 +7,12 @@ import PublishButton from '@/components/PublishButton.jsx';
 
 export default async function VenuesPage() {
   const session = await getSession();
-  seed(session.orgId);
+  if (!session) redirect('/auth/login'); // only reachable once Auth0 is live
+  await seed(session.orgId);
 
   const [entitlement, venues] = await Promise.all([
     getEntitlement(session.orgId),
-    Promise.resolve(listVenues(session.orgId)),
+    listVenues(session.orgId),
   ]);
 
   // The join: an identity fact and a billing fact, decided together.

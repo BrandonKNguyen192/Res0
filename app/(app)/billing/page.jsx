@@ -1,22 +1,24 @@
+import { redirect } from 'next/navigation';
 import { getSession, getEntitlement } from '@/lib/contract.js';
 import { listVenues, seed } from '@/lib/db.js';
+import { stripeReady } from '@/lib/stripe.js';
 
 // ── B OWNS THIS PAGE ─────────────────────────────────────────────────────────
-// The shape is here so the core app has somewhere to send an operator who hits the paywall.
-// Two things to wire, and nothing else on this page needs to change:
+// Both buttons are WIRED: they post to /api/stripe/checkout and /api/stripe/portal, which
+// redirect out to Stripe. Checkout covers quantity = venues.length + 1 (or does a prorated
+// quantity change if a subscription already exists).
 //
-//   1. "Add a venue to the plan" → a Checkout session for quantity = venues.length + 1
-//   2. "Manage billing" → a Stripe Customer Portal session for entitlement.customerId
-//
-// Read subscription state through getEntitlement() in lib/contract.js — do not call Stripe
-// directly from a page render. The webhook is the source of truth; this only displays it.
+// Subscription state still comes only through getEntitlement() — the webhook
+// (app/api/stripe/webhook) is the source of truth; this page only displays it.
 
-export default async function BillingPage() {
+export default async function BillingPage({ searchParams }) {
   const session = await getSession();
-  seed(session.orgId);
+  if (!session) redirect('/auth/login');
+  await seed(session.orgId);
 
+  const flags = await searchParams;
   const entitlement = await getEntitlement(session.orgId);
-  const venues = listVenues(session.orgId);
+  const venues = await listVenues(session.orgId);
   const active = entitlement.status === 'active';
 
   return (
@@ -31,6 +33,18 @@ export default async function BillingPage() {
           </p>
         </div>
       </div>
+
+      {flags?.checkout === 'success' && (
+        <div className="notice" style={{ marginBottom: 18 }}>
+          Payment confirmed. The webhook flips entitlement — instant with{' '}
+          <code>stripe listen</code> running.
+        </div>
+      )}
+      {flags?.upgraded && (
+        <div className="notice" style={{ marginBottom: 18 }}>
+          Plan updated with proration — one more venue is covered.
+        </div>
+      )}
 
       <div className="grid">
         <div className="card">
@@ -55,10 +69,32 @@ export default async function BillingPage() {
 
         <div className="card">
           <div className="meta">Change the plan</div>
-          {/* B: replace these with real Checkout / Portal redirects. */}
-          <button className="btn primary" disabled>Add a venue to the plan</button>
-          <button className="btn" disabled>Manage billing</button>
-          <div className="notice">Stripe Checkout and the Customer Portal wire in here.</div>
+          {stripeReady ? (
+            <>
+              <form action="/api/stripe/checkout" method="post">
+                <button className="btn primary" type="submit">Add a venue to the plan</button>
+              </form>
+              {entitlement.customerId ? (
+                <form action="/api/stripe/portal" method="post">
+                  <button className="btn" type="submit">Manage billing</button>
+                </form>
+              ) : (
+                <button className="btn" disabled>Manage billing</button>
+              )}
+              <div className="notice">
+                Checkout covers every current venue plus the next one. The webhook — not the
+                redirect — is what unlocks the app.
+              </div>
+            </>
+          ) : (
+            <>
+              <button className="btn primary" disabled>Add a venue to the plan</button>
+              <button className="btn" disabled>Manage billing</button>
+              <div className="notice">
+                Set STRIPE_SECRET_KEY and STRIPE_PRICE_ID and these go live.
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>

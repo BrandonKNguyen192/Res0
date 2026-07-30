@@ -15,9 +15,9 @@ export async function addVenue(formData) {
   const session = await getSession();
   if (!session) return { ok: false, message: 'Not signed in.' };
 
-  seed(session.orgId);
+  await seed(session.orgId);
   const entitlement = await getEntitlement(session.orgId);
-  const venues = listVenues(session.orgId);
+  const venues = await listVenues(session.orgId);
 
   const verdict = canAddVenue(entitlement, venues.length);
   if (!verdict.ok) return { ok: false, reason: verdict.reason, message: verdict.message };
@@ -25,7 +25,7 @@ export async function addVenue(formData) {
   const name = String(formData.get('name') || '').trim();
   if (!name) return { ok: false, message: 'Give the venue a name.' };
 
-  createVenue(session.orgId, { name, city: String(formData.get('city') || '').trim() });
+  await createVenue(session.orgId, { name, city: String(formData.get('city') || '').trim() });
   revalidatePath('/');
   return { ok: true };
 }
@@ -40,7 +40,7 @@ export async function publishVenue(venueId) {
     return { ok: false, message: 'Publishing needs an active subscription.' };
   }
 
-  const v = updateVenue(session.orgId, venueId, { published: true });
+  const v = await updateVenue(session.orgId, venueId, { published: true });
   if (!v) return { ok: false, message: 'No such venue.' };
 
   revalidatePath('/');

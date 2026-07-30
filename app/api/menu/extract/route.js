@@ -22,19 +22,19 @@ printed, write a short one from the dish name. Never invent dishes that are not 
 export async function POST(req) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: 'Not signed in.' }, { status: 401 });
-  seed(session.orgId);
+  await seed(session.orgId);
 
   let body;
   try { body = await req.json(); } catch { return NextResponse.json({ error: 'Bad request.' }, { status: 400 }); }
 
   const { venueId, imageDataUrl } = body || {};
-  const venue = getVenue(session.orgId, venueId);
+  const venue = await getVenue(session.orgId, venueId);
   if (!venue) return NextResponse.json({ error: 'No such venue.' }, { status: 404 });
 
   const key = process.env.OPENROUTER_API_KEY;
   if (!key || !imageDataUrl) {
     const menu = sampleMenu(venue);
-    updateVenue(session.orgId, venueId, { menu });
+    await updateVenue(session.orgId, venueId, { menu });
     return NextResponse.json({
       ok: true, live: false, menu,
       note: key ? 'No image supplied — sample menu used.'
@@ -67,12 +67,12 @@ export async function POST(req) {
     const menu = parseMenu(text);
     if (!menu) throw new Error('Model returned unparseable JSON');
 
-    updateVenue(session.orgId, venueId, { menu });
+    await updateVenue(session.orgId, venueId, { menu });
     return NextResponse.json({ ok: true, live: true, model: MODEL, menu });
   } catch (e) {
     // Fall back rather than leaving the operator with nothing mid-demo — but say so.
     const menu = sampleMenu(venue);
-    updateVenue(session.orgId, venueId, { menu });
+    await updateVenue(session.orgId, venueId, { menu });
     return NextResponse.json({
       ok: true, live: false, menu,
       note: `Extraction failed (${String(e.message || e).slice(0, 120)}) — sample menu used.`,

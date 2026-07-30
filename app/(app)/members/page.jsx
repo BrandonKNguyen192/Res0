@@ -1,12 +1,16 @@
+import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/contract.js';
 import { listMembers, listVenues, seed } from '@/lib/db.js';
 
 export default async function MembersPage() {
   const session = await getSession();
-  seed(session.orgId);
+  if (!session) redirect('/auth/login');
+  await seed(session.orgId);
 
-  const members = listMembers(session.orgId);
-  const venues = listVenues(session.orgId);
+  const [members, venues] = await Promise.all([
+    listMembers(session.orgId),
+    listVenues(session.orgId),
+  ]);
   const venueName = (id) => venues.find((v) => v.id === id)?.name || 'All venues';
 
   return (

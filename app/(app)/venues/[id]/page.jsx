@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { getSession, getEntitlement, canPublish } from '@/lib/contract.js';
 import { getVenue, seed } from '@/lib/db.js';
 import MenuBuilder from '@/components/MenuBuilder.jsx';
@@ -8,9 +8,10 @@ import PublishButton from '@/components/PublishButton.jsx';
 export default async function VenuePage({ params }) {
   const { id } = await params;
   const session = await getSession();
-  seed(session.orgId);
+  if (!session) redirect('/auth/login');
+  await seed(session.orgId);
 
-  const venue = getVenue(session.orgId, id);
+  const venue = await getVenue(session.orgId, id);
   if (!venue) notFound();
 
   const entitlement = await getEntitlement(session.orgId);
