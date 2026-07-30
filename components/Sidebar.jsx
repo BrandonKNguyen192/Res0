@@ -16,6 +16,7 @@ export default function Sidebar({ items, orgName }) {
       </button>
       {open && <div className="nav-overlay" onClick={() => setOpen(false)} />}
       <aside className={`sidebar ${open ? 'open' : ''}`}>
+        <div className="sidebar-brand-watermark">Res0</div>
         <div className="sidebar-header">
           <Link href="/" className="brand" onClick={() => setOpen(false)}>Res0</Link>
           <button className="nav-close" onClick={() => setOpen(false)} aria-label="Close navigation">×</button>

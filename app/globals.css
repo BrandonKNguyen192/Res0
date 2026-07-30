@@ -49,7 +49,8 @@ code{font-family:ui-monospace,Menlo,monospace;background:var(--color-cream);bord
 .sidebar{margin:0;background:var(--color-cream);border-top:1.5px solid var(--color-ash);
   border-right:0;border-bottom:0;border-left:0;
   padding:var(--spacing-144) 12px 0;display:flex;flex-direction:column;gap:3px;
-  overflow-y:auto;position:sticky;top:14px;max-height:calc(100vh - 28px)}
+  overflow-y:auto;position:sticky;top:14px;max-height:calc(100vh - 28px);isolation:isolate}
+.nav-item,.brand,.brand-sub,.side-foot,.sidebar-header{position:relative;z-index:1}
 .brand{font-family:var(--font-editorial-new);font-weight:300;font-size:42px;
   color:var(--color-voltage-blue);padding:4px 8px 2px;letter-spacing:-0.02em;display:block}
 a.brand:hover{color:var(--color-ink)}
@@ -304,6 +305,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .nav-overlay{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.3)}
 .nav-close{display:none;background:none;border:none;font-size:28px;color:var(--color-voltage-blue);cursor:pointer;padding:0;line-height:1}
 .sidebar-header{display:none;align-items:center;justify-content:space-between;padding:0 8px;margin-bottom:8px}
+.sidebar-brand-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-editorial-new);font-size:clamp(80px,10vw,120px);font-weight:300;color:var(--color-voltage-blue);opacity:.06;pointer-events:none;white-space:nowrap;user-select:none;width:100%;text-align:center;line-height:1;z-index:0}
 
 @media (max-width:960px){
   .nav-toggle{display:flex}
