@@ -15,7 +15,7 @@ export default function GlassList({ items }) {
     <div className="w86">
       {list.map((g) => (
         <div className="wrow" key={g.id}>
-          <span className="wdot" style={{ background: g.on ? 'var(--accent)' : 'var(--bv)' }} />
+          <span className="wdot" style={{ background: g.on ? 'var(--color-voltage-blue)' : 'var(--color-ash)' }} />
           <div>
             <div className="wname">{g.name}</div>
             <div className="wnote">{g.note}</div>

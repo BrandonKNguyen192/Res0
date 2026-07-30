@@ -8,20 +8,16 @@ import PublishButton from '@/components/PublishButton.jsx';
 
 export default async function VenuesPage() {
   const session = await getSession();
-  if (!session) redirect('/auth/login'); // only reachable once Auth0 is live
-  if (!canView(session.role, '/')) redirect(homeFor(session.role));
+  if (!session) redirect('/auth/login');
+  if (!canView(session.role, '/dashboard')) redirect(homeFor(session.role));
   await seed(session.orgId);
 
   const [entitlement, allVenues] = await Promise.all([
     getEntitlement(session.orgId),
     listVenues(session.orgId),
   ]);
-  // A GM sees their venue; the owner sees the portfolio. Scope is a token fact.
   const venues = scopeVenues(session, allVenues);
 
-  // The join: an identity fact and a billing fact, decided together.
-  // The count is the ORG's venue count — scope narrows what you see,
-  // never what the plan covers.
   const verdict = canAddVenue(entitlement, allVenues.length);
 
   return (

@@ -40,7 +40,7 @@ export default async function LiveOpsPage() {
         <div className="kpi"><div className="l">Avg ticket time</div><div className="n">{f.ticketMin} min</div><div className="delta up">▲ under 16 target</div></div>
         <div className="kpi"><div className="l">Labor right now</div><div className="n">{f.laborNow}%</div><div className="delta up">▲ on target</div></div>
         <div className="kpi"><div className="l">Covers vs forecast</div><div className="n">{f.coversVsForecast}</div><div className="delta up">▲ running ahead</div></div>
-        <div className="kpi"><div className="l">Voids tonight</div><div className="n" style={{ color: 'var(--red)' }}>${f.voids}</div><div className="delta down">▼ simulated</div></div>
+        <div className="kpi"><div className="l">Voids tonight</div><div className="n" style={{ color: 'var(--color-ink)' }}>${f.voids}</div><div className="delta down">▼ simulated</div></div>
       </div>
 
       <div className="sect">

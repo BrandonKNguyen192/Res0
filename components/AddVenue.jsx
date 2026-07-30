@@ -31,8 +31,8 @@ export default function AddVenue({ allowed, message, count, limit }) {
   if (!open) {
     return (
       <button className="blocked" onClick={() => setOpen(true)} style={{ cursor: 'pointer' }}>
-        <div style={{ fontSize: 26, color: 'var(--brass)' }}>+</div>
-        <div style={{ color: 'var(--ink-2)', fontWeight: 600 }}>Add a venue</div>
+        <div style={{ fontSize: 26, color: 'var(--color-voltage-blue)' }}>+</div>
+        <div style={{ color: 'var(--color-ink)', fontWeight: 400 }}>Add a venue</div>
         <div className="notice">{limit - count} left on this plan</div>
       </button>
     );

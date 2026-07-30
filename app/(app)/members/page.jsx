@@ -42,9 +42,9 @@ export default async function MembersPage() {
             {members.map((m) => (
               <tr key={m.id}>
                 <td style={{ fontWeight: 600 }}>{m.name}</td>
-                <td style={{ color: 'var(--ink-2)' }}>{m.email}</td>
+                <td style={{ color: 'var(--color-voltage-blue)' }}>{m.email}</td>
                 <td><span className="pill brass">{m.role}</span></td>
-                <td style={{ color: 'var(--ink-2)' }}>{venueName(m.venueId)}</td>
+                <td style={{ color: 'var(--color-voltage-blue)' }}>{venueName(m.venueId)}</td>
               </tr>
             ))}
           </tbody>

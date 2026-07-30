@@ -64,8 +64,8 @@ export default async function BillingPage({ searchParams }) {
 
         <div className="card">
           <div className="meta">Venues on the plan</div>
-          <div style={{ fontFamily: 'var(--serif)', fontSize: 34, lineHeight: 1 }}>
-            {venues.length} <span style={{ fontSize: 16, color: 'var(--ink-3)' }}>of {entitlement.quantity}</span>
+          <div style={{ fontFamily: 'var(--font-editorial-new)', fontSize: 34, lineHeight: 1 }}>
+            {venues.length} <span style={{ fontSize: 16, color: 'var(--color-voltage-blue)' }}>of {entitlement.quantity}</span>
           </div>
           <div className="meta">$29 per venue, per month</div>
         </div>

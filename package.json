@@ -10,11 +10,11 @@
     "db:migrate": "node --env-file-if-exists=.env scripts/migrate.mjs"
   },
   "dependencies": {
+    "@auth0/nextjs-auth0": "^4.0.1",
     "next": "^15.1.0",
-    "pg": "^8.16.0",
+    "pg": "^8.22.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "stripe": "^17.5.0",
-    "@auth0/nextjs-auth0": "^4.0.1"
+    "stripe": "^17.5.0"
   }
 }

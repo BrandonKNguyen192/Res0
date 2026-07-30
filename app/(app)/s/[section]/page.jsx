@@ -32,7 +32,7 @@ export default async function SectionPage({ params }) {
         </div>
       </div>
       <div className="blocked" style={{ cursor: 'default' }}>
-        <div style={{ fontWeight: 650, color: 'var(--ink)' }}>On the platform roadmap</div>
+        <div style={{ fontWeight: 400, color: 'var(--color-ink)' }}>On the platform roadmap</div>
         <div className="notice">
           This section ships after the pilot — today&rsquo;s build is the boundary: identity,
           billing, venues and menus.

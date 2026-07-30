@@ -77,7 +77,7 @@ export default async function VenuePage({ params }) {
           </div>
         ) : (
           <div className="blocked">
-            <div style={{ color: 'var(--ink-2)', fontWeight: 600 }}>No menu yet</div>
+            <div style={{ color: 'var(--color-ink)', fontWeight: 400 }}>No menu yet</div>
             <div className="notice">Photograph the printed menu and it builds itself.</div>
           </div>
         )}
