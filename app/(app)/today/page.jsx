@@ -1,8 +1,10 @@
 import { redirect } from 'next/navigation';
-import { getSession } from '@/lib/contract.js';
+import { getSession, getEntitlement } from '@/lib/contract.js';
 import { listVenues, seed } from '@/lib/db.js';
 import { canView, homeFor, scopeVenues } from '@/lib/roles.js';
-import { TONIGHT, money } from '@/lib/demo.js';
+import { TONIGHT, money, opsFor } from '@/lib/demo.js';
+import { computeInsights } from '@/lib/insights.js';
+import InsightFeed from '@/components/InsightFeed.jsx';
 
 // Tonight, at a glance. Owner sees every venue; a GM or server arrives pinned
 // to their own (the venue scope is an identity fact — it rides the token).
@@ -13,9 +15,22 @@ export default async function TodayPage() {
   if (!canView(session.role, '/today')) redirect(homeFor(session.role));
   await seed(session.orgId);
 
-  const venues = scopeVenues(session, await listVenues(session.orgId));
+  const allVenues = await listVenues(session.orgId);
+  const venues = scopeVenues(session, allVenues);
   const manager = session.role === 'owner' || session.role === 'general_manager';
   const t = TONIGHT;
+
+  // The pre-shift brief: the insight engine, filtered to this role. A server
+  // walks in and sees what matters to a server; the GM sees the leaks.
+  const brief = computeInsights(
+    {
+      venues: allVenues,
+      ops: allVenues.map((v) => ({ venue: v, o: opsFor(v) })),
+      entitlement: await getEntitlement(session.orgId),
+      tonight: t,
+    },
+    session.role,
+  ).slice(0, 3);
 
   return (
     <>
@@ -34,6 +49,8 @@ export default async function TodayPage() {
         {!session.venueSlug && <span className="chip">All venues</span>}
         {session.venueSlug && <span className="notice">pinned to your venue — scope comes from the token</span>}
       </div>
+
+      <InsightFeed title="Pre-shift brief" insights={brief} />
 
       {manager && (
         <>

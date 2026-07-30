@@ -27,12 +27,17 @@ export default async function GuestMenu({ params }) {
           <section className="menu-sec" key={i}>
             <h2>{sec.name}</h2>
             {(sec.items || []).map((item, j) => (
-              <div className="dish" key={j}>
+              // `out` is the 86 flag — set from live ops, visible here seconds
+              // later. The dish stays on the page, dimmed and honest, the way a
+              // good floor tells a guest "we ran out" rather than hiding it.
+              <div className={`dish ${item.out ? 'out' : ''}`} key={j}>
                 <div>
                   <div className="d-name">{item.name}</div>
                   {item.desc && <div className="d-desc">{item.desc}</div>}
                 </div>
-                {item.price && <div className="d-price">{item.price}</div>}
+                {item.out
+                  ? <div className="d-price out-note">86&rsquo;d tonight</div>
+                  : item.price && <div className="d-price">{item.price}</div>}
               </div>
             ))}
           </section>

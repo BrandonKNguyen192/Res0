@@ -5,6 +5,7 @@ import Sidebar from '@/components/Sidebar.jsx';
 import ThemeToggle from '@/components/ThemeToggle.jsx';
 import RoleSwitcher from '@/components/RoleSwitcher.jsx';
 import { auth0 } from '@/lib/auth0.js';
+import { kindLive } from '@/lib/connectors.js';
 
 export const metadata = {
   title: 'Res0 — command center',
@@ -32,7 +33,10 @@ export default async function AppLayout({ children }) {
             <header className="topbar">
               <div className="hstatus">
                 <span className="hs on"><i className="hdot" />API live</span>
-                <span className="hs warn"><i className="hdot" />POS · simulated</span>
+                {/* honest pill: flips the moment a POS key lands in the env */}
+                <span className={`hs ${kindLive('pos') ? 'on' : 'warn'}`}>
+                  <i className="hdot" />POS · {kindLive('pos') ? 'live' : 'simulated'}
+                </span>
               </div>
               <span className="tspacer" />
               {session?.demo && <RoleSwitcher current={session.role} />}

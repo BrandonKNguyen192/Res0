@@ -3,7 +3,9 @@ import { redirect } from 'next/navigation';
 import { getSession, getEntitlement } from '@/lib/contract.js';
 import { listVenues, seed } from '@/lib/db.js';
 import { canView, homeFor } from '@/lib/roles.js';
-import { opsFor, money } from '@/lib/demo.js';
+import { opsFor, money, TONIGHT } from '@/lib/demo.js';
+import { computeInsights } from '@/lib/insights.js';
+import InsightFeed from '@/components/InsightFeed.jsx';
 
 // The owner's view: every venue, every number. Ops numbers are simulated until
 // a POS connector is wired (and say so); venues, publish state and the plan are
@@ -66,6 +68,12 @@ export default async function PortfolioPage() {
           <div className="delta up">{best ? `▲ +${best.o.delta}% · ${best.o.covers} covers` : ''}</div>
         </div>
       </div>
+
+      <div className="sect"><h2>Hidden gems &amp; inefficiencies</h2></div>
+      <InsightFeed
+        title="What the numbers are trying to tell you"
+        insights={computeInsights({ venues, ops, entitlement, tonight: TONIGHT }, session.role)}
+      />
 
       <div className="sect"><h2>Your venues</h2><span className="tag-live">tap to drill in</span></div>
       <div className="grid">

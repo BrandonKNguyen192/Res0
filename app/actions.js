@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getSession, getEntitlement, canAddVenue, canPublish } from '@/lib/contract.js';
-import { listVenues, createVenue, updateVenue, seed } from '@/lib/db.js';
+import { listVenues, createVenue, getVenue, updateVenue, seed } from '@/lib/db.js';
 import { ROLES, homeFor } from '@/lib/roles.js';
 
 /** Demo-only "View as": swaps the stub persona via cookie, server-side — the
@@ -66,4 +66,33 @@ export async function publishVenue(venueId) {
   revalidatePath('/');
   revalidatePath(`/m/${v.slug}`);
   return { ok: true };
+}
+
+/**
+ * 86 a dish (or restore it) — the floor decision that reaches the public
+ * surface. Flips the `out` flag on the item INSIDE the venue's stored menu and
+ * revalidates the guest page, so /m/<slug> changes the moment service does.
+ * Every service role can 86; venue-scoped roles only at their own venue.
+ */
+export async function toggleDish(formData) {
+  const session = await getSession();
+  if (!session) redirect('/auth/login');
+
+  const venueId = String(formData.get('venueId') || '');
+  const sectionIdx = Number(formData.get('section'));
+  const itemIdx = Number(formData.get('item'));
+
+  const venue = await getVenue(session.orgId, venueId);
+  if (!venue || !venue.menu) redirect('/live-ops');
+  if (session.venueSlug && venue.slug !== session.venueSlug) redirect('/live-ops');
+
+  const menu = structuredClone(venue.menu);
+  const item = menu.sections?.[sectionIdx]?.items?.[itemIdx];
+  if (!item) redirect('/live-ops');
+  item.out = !item.out;
+  await updateVenue(session.orgId, venueId, { menu });
+
+  revalidatePath('/live-ops');
+  revalidatePath(`/venues/${venueId}`);
+  revalidatePath(`/m/${venue.slug}`);
 }
