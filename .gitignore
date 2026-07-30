@@ -1,14 +1,10 @@
 # ── secrets ──────────────────────────────────────────────────────────────────
 # THIS REPOSITORY IS PUBLIC. Nothing below may ever be committed.
-.env
-.env.*
-!.env.example
 
 # Stripe Projects writes provisioned credentials here. The vault is secret; the
 # state file (.projects/state.local.json) is NOT ignored on purpose — it is how a
 # teammate runs `stripe projects link` and pulls the same credentials from the
 # Secret Store instead of pasting keys into chat.
-.projects/vault/
 .projects/**/vault/
 *.pem
 *.key
@@ -29,5 +25,18 @@ npm-debug.log*
 Thumbs.db
 .idea/
 .vscode/
+.agents/
+.claude/
+.cursor/
 coverage/
 *.tsbuildinfo
+
+.projects/cache
+.projects/vault
+.projects/state.test.json
+.projects/state.local.test.json
+.env
+.env.*
+!.env.example
+
+.cursorignore
