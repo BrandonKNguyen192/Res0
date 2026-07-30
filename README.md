@@ -53,6 +53,7 @@ accounts, with credentials written straight to `.env`. No dashboards.
 npm install
 stripe projects link          # pulls the same provisioned credentials
 stripe projects env --pull    # writes .env
+npm run db:migrate            # applies db/schema.sql to Neon (idempotent)
 npm run dev
 ```
 

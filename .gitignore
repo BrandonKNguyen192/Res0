@@ -13,6 +13,9 @@
 *.pem
 *.key
 
+# The Stripe CLI drops a local jwt_secret into data/ when it authenticates.
+data/jwt_secret
+
 # ── build output ─────────────────────────────────────────────────────────────
 node_modules/
 .next/
