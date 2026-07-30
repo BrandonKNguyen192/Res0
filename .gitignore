@@ -31,6 +31,9 @@ Thumbs.db
 coverage/
 *.tsbuildinfo
 
+
+.cursorignore
+
 .projects/cache
 .projects/vault
 .projects/state.test.json
@@ -38,5 +41,3 @@ coverage/
 .env
 .env.*
 !.env.example
-
-.cursorignore

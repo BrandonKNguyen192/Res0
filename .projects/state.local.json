@@ -31,19 +31,6 @@
     }
   },
   "resources": {
-    "auth0-client": {
-      "configuration": {
-        "name": "res0"
-      },
-      "createdAt": "2026-07-30T21:16:52.670Z",
-      "lastRevealedAt": "2026-07-30T21:16:52.829Z",
-      "lastStatus": "complete",
-      "name": "auth0-client",
-      "providerId": "prvdr_61UVctyxfLOj4FpVw5Bmi",
-      "providerName": "Auth0",
-      "resourceId": "fres_61V8PHFM3yHwjJZgL16SuuFhAjSQayjeSaio3qJpoTFo",
-      "serviceId": "client"
-    },
     "auth0-plan": {
       "configuration": {},
       "createdAt": "2026-07-30T21:16:48.760Z",
@@ -54,6 +41,19 @@
       "providerName": "Auth0",
       "resourceId": "fres_61V8PHC0DHMnf3riR16SuuFhAjSQayjeSaio3qJpoGHA",
       "serviceId": "free"
+    },
+    "res0": {
+      "configuration": {
+        "name": "res0"
+      },
+      "createdAt": "2026-07-30T21:54:28.595Z",
+      "lastRevealedAt": "2026-07-30T21:54:28.767Z",
+      "lastStatus": "complete",
+      "name": "res0",
+      "providerId": "prvdr_61UVctyxfLOj4FpVw5Bmi",
+      "providerName": "Auth0",
+      "resourceId": "fres_61V8Prdfg9tNrtqKu16SuuFhAjSQayjeSaio3qJpoOUC",
+      "serviceId": "client"
     },
     "vercel-plan": {
       "configuration": {},
