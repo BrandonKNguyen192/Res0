@@ -1,0 +1,33 @@
+# ── secrets ──────────────────────────────────────────────────────────────────
+# THIS REPOSITORY IS PUBLIC. Nothing below may ever be committed.
+.env
+.env.*
+!.env.example
+
+# Stripe Projects writes provisioned credentials here. The vault is secret; the
+# state file (.projects/state.local.json) is NOT ignored on purpose — it is how a
+# teammate runs `stripe projects link` and pulls the same credentials from the
+# Secret Store instead of pasting keys into chat.
+.projects/vault/
+.projects/**/vault/
+*.pem
+*.key
+
+# ── build output ─────────────────────────────────────────────────────────────
+node_modules/
+.next/
+out/
+dist/
+build/
+.vercel/
+.turbo/
+
+# ── local ────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+coverage/
+*.tsbuildinfo
