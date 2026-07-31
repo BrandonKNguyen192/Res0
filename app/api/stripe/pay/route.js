@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/contract.js';
-import { stripeReady } from '@/lib/stripe.js';
+import { stripePaymentsReady } from '@/lib/stripe.js';
 import { createPaymentCheckout } from '@/lib/paywall.js';
 import { getOrder } from '@/lib/supplies.js';
 
 // Creates a Checkout Session for a pending order and redirects to Stripe.
 // Called via form POST from the supplies page (the browser follows the 303 redirect).
 export async function POST(request) {
-  if (!stripeReady) {
+  if (!stripePaymentsReady) {
     return NextResponse.json({ error: 'Stripe is not configured yet.' }, { status: 503 });
   }
 
