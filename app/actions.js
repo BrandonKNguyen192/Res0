@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { getSession, getEntitlement, canAddVenue, canPublish } from '@/lib/contract.js';
 import { listVenues, createVenue, getVenue, updateVenue, seed } from '@/lib/db.js';
 import { ROLES, homeFor } from '@/lib/roles.js';
+import { createOrder } from '@/lib/supplies.js';
 
 /** Demo-only "View as": swaps the stub persona via cookie, server-side — the
  *  same round-trip a real login would make. Live Auth0 sessions ignore it. */
@@ -74,6 +75,41 @@ export async function publishVenue(venueId) {
  * revalidates the guest page, so /m/<slug> changes the moment service does.
  * Every service role can 86; venue-scoped roles only at their own venue.
  */
+/**
+ * Place a supply reorder — creates a pending order that the client then pays
+ * for via POST /api/stripe/pay. No subscription check; pay-per-order only.
+ * Role-gated to owner + general_manager.
+ */
+export async function placeSupplyReorder(formData) {
+  const session = await getSession();
+  if (!session) return { ok: false, message: 'Not signed in.' };
+  if (session.role !== 'owner' && session.role !== 'general_manager') {
+    return { ok: false, message: 'Your role cannot reorder supplies.' };
+  }
+
+  const raw = formData.get('items');
+  if (!raw) return { ok: false, message: 'No items in the order.' };
+
+  let items;
+  try { items = JSON.parse(raw); } catch { return { ok: false, message: 'Invalid items.' }; }
+  if (!Array.isArray(items) || items.length === 0) {
+    return { ok: false, message: 'Order must have at least one item.' };
+  }
+  for (const item of items) {
+    if (!item.id || typeof item.quantity !== 'number' || item.quantity < 1) {
+      return { ok: false, message: 'Each item needs a valid id and quantity.' };
+    }
+  }
+
+  try {
+    const order = createOrder(session.orgId, items);
+    revalidatePath('/supplies');
+    return { ok: true, orderId: order.id, total: order.total };
+  } catch (e) {
+    return { ok: false, message: e.message };
+  }
+}
+
 export async function toggleDish(formData) {
   const session = await getSession();
   if (!session) redirect('/auth/login');

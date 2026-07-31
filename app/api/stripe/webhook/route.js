@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe.js';
 import { saveEntitlementRow } from '@/lib/db.js';
+import { markOrderPaid } from '@/lib/supplies.js';
 
 // Subscription state flows back into identity here. This route is the ONLY writer of the
 // entitlements row that getEntitlement() reads — the redirect back from Checkout never is.
+// Also handles one-time payment confirmations (e.g. supplies reorders) via metadata dispatch.
 // Signature verification is mandatory; the route is excluded from the auth middleware because
 // Stripe, not a member, is the caller.
 //
@@ -28,6 +30,18 @@ export async function POST(request) {
     case 'checkout.session.completed': {
       const checkout = event.data.object;
       const orgId = checkout.client_reference_id;
+      const meta = checkout.metadata || {};
+
+      // Dispatch by checkout type
+      if (meta.type === 'supplies') {
+        const refId = meta.reference_id;
+        if (orgId && refId) {
+          markOrderPaid(orgId, refId, checkout.id);
+        }
+        break;
+      }
+
+      // Default: subscription checkout
       const subId =
         typeof checkout.subscription === 'string' ? checkout.subscription : checkout.subscription?.id;
       if (orgId && subId) {
@@ -40,14 +54,10 @@ export async function POST(request) {
     case 'customer.subscription.updated':
     case 'customer.subscription.deleted': {
       const sub = event.data.object;
-      // org_id travels on subscription metadata (set at checkout) — the org owns the
-      // subscription, so the webhook needs no session and no user.
       const orgId = sub.metadata?.org_id;
       if (orgId) await persist(orgId, sub);
       break;
     }
-    // invoice.payment_failed needs no handler: Stripe moves the subscription to past_due,
-    // which arrives via customer.subscription.updated above.
   }
 
   return NextResponse.json({ received: true });
