@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { placeSupplyReorder } from '@/app/actions.js';
+import { useRouter } from 'next/navigation';
 
 export default function SuppliesOrder({ catalog, categories, history }) {
   const [cart, setCart] = useState({});
   const [error, setError] = useState(null);
   const [pending, start] = useTransition();
+  const router = useRouter();
 
   const update = (id, qty) => {
     setCart((prev) => {
@@ -24,25 +25,20 @@ export default function SuppliesOrder({ catalog, categories, history }) {
 
   const placeOrder = () => {
     const items = Object.entries(cart).map(([id, quantity]) => ({ id, quantity }));
-    const fd = new FormData();
-    fd.set('items', JSON.stringify(items));
 
     start(async () => {
-      const res = await placeSupplyReorder(fd);
-      if (!res.ok) { setError(res.message); return; }
-
-      // Build a form and submit it natively — the POST redirect to Stripe
-      // works because the browser follows the 303.
-      const form = document.createElement('form');
-      form.method = 'post';
-      form.action = '/api/stripe/pay';
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = 'orderId';
-      input.value = res.orderId;
-      form.appendChild(input);
-      document.body.appendChild(form);
-      form.submit();
+      try {
+        const res = await fetch('/api/stripe/pay', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items }),
+        });
+        const data = await res.json();
+        if (!res.ok) { setError(data.error || 'Could not start payment.'); return; }
+        window.location.href = data.url;
+      } catch {
+        setError('Network error. Please try again.');
+      }
     });
   };
 
