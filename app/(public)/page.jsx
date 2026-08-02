@@ -1,6 +1,14 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { getSession } from '@/lib/contract.js';
+import { homeFor } from '@/lib/roles.js';
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  // A real signed-in session skips the landing page entirely — straight to the
+  // role's home. Stub/demo sessions fall through so the landing stays reachable.
+  const session = await getSession();
+  if (session && !session.demo) redirect(homeFor(session.role));
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'clamp(16px, 4vw, var(--spacing-29)) clamp(16px, 6vw, var(--spacing-144))', borderTop: '1.5px solid var(--color-ash)' }}>
